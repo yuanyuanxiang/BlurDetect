@@ -64,6 +64,7 @@ BEGIN_MESSAGE_MAP(CBlurDetectorDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_COMMAND(ID_FILE_OPEN, &CBlurDetectorDlg::OnFileOpen)
+	ON_COMMAND(ID_BLUR_DETECT, &CBlurDetectorDlg::OnBlurDetect)
 END_MESSAGE_MAP()
 
 
@@ -100,6 +101,7 @@ BOOL CBlurDetectorDlg::OnInitDialog()
 
 	// TODO: 在此添加额外的初始化代码
 	calcuXabs();
+	cv::ocl::setUseOpenCL(true);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -178,14 +180,17 @@ void CBlurDetectorDlg::OnBlurDetect()
 {
 	if (!m_Image.IsNull())
 	{
-		int w = m_Image.GetWidth(), h = m_Image.GetHeight();
-		const BYTE *addr = (BYTE*)m_Image.GetBits() + (h-1) * m_Image.GetPitch();
-		Mat m(h, w, CV_MAKETYPE(8, m_Image.GetBPP() / 8));
-		memcpy(m.data, addr, h * abs(m_Image.GetPitch()));
-		if (1 != m.channels()) cvtColor(m, m, CV_RGB2GRAY);
-		char result[64];
-		sprintf_s(result, "%f", BlurDetect(m));
-		MessageBox(CString(result), _T("Info"), MB_ICONINFORMATION);
+		int w = m_Image.GetWidth(), h = m_Image.GetHeight(), 
+			C = m_Image.GetBPP() / 8, L = m_Image.GetPitch();
+		if (1 == C || 3 == C || 4 == C)
+		{
+			BYTE *addr = (BYTE*)m_Image.GetBits() + (h-1) * L;
+			Mat m(h, w, CV_MAKETYPE(CV_8U, C), addr, abs(L)), gray;
+			if (1 != C) cvtColor(m, gray, CV_RGB2GRAY);
+			char result[64] = { 0 };
+			sprintf_s(result, "%f", BlurDetect(1 == C ? m : gray));
+			MessageBox(CString(result), _T("Info"), MB_ICONINFORMATION);
+		}
 	}
 }
 
