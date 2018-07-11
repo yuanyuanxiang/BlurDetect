@@ -39,10 +39,10 @@ double BlurDetect(const Mat& img_gray)
 			// 3行 e6 e7 e8
 			// 2行 e4 e0 e5
 			// 1行 e1 e2 e3
-			const uchar t = 255 -  *(pst2+j); //中心
-			sum_all += X_abs[*(pst1+j-1) + t] + X_abs[*(pst1+j)	 + t]	+ X_abs[*(pst1+j+1) + t];
-			sum_all += X_abs[*(pst2+j-1) + t]							+ X_abs[*(pst2+j+1) + t];
-			sum_all += X_abs[*(pst3+j-1) + t] + X_abs[*(pst3+j)	 + t]	+ X_abs[*(pst3+j+1) + t];
+			const uchar *p1 = pst1 + j, *p2 = pst2 + j, *p3 = pst3 + j, t = 255 - *p2;
+			sum_all += X_abs[*(p1 - 1) + t] + X_abs[*p1 + t] + X_abs[*(p1 + 1) + t];
+			sum_all += X_abs[*(p2 - 1) + t]					 + X_abs[*(p2 + 1) + t];
+			sum_all += X_abs[*(p3 - 1) + t] + X_abs[*p3 + t] + X_abs[*(p3 + 1) + t];
 		}
 	}
 	int size = 2 * (h_e-h_s) * (w_e-w_s);
