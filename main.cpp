@@ -8,8 +8,7 @@ int main(int argc, const char *argv[])
 	try {
 		m = imread(path);
 	} catch (...){ return -1; }
-	if (1 != m.channels())
-		cvtColor(m, m, CV_RGB2GRAY);
+
 	double s = BlurDetect(m);
 	printf("\"%s\" BlurDetect result: %f\n", path, s);
 
