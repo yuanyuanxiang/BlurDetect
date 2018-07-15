@@ -5,5 +5,8 @@
 // 计算x([-255, 255])绝对值, 计算公式：abs(a) = X[a+255]
 void calcuXabs();
 
-// 计算一副灰度图像的梯度值
-double BlurDetect(const Mat& img_gray);
+// 计算一副灰度图像的梯度值，范围：[0, 255]
+double BlurDetect(const Mat& img);
+
+// 计算一副图像的峰值信噪比
+double ImagePsnr(const Mat& img);

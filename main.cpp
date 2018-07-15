@@ -11,6 +11,8 @@ int main(int argc, const char *argv[])
 
 	double s = BlurDetect(m);
 	printf("\"%s\" BlurDetect result: %f\n", path, s);
+	s = ImagePsnr(m);
+	printf("\"%s\" ImagePsnr result: %f\n", path, s);
 
 	return 0;
 }

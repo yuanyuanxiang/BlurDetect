@@ -17,17 +17,13 @@ void calcuXabs()
 
 double BlurDetect(const Mat& img)
 {
-	const int w_s = 1; // 宽度开始点
-	const int h_s = 1; // 高度开始点
-	const int w_b = img.cols - 1; // 宽度结束点
-	const int h_b = img.rows - 1; // 高度结束点
+	const int w_s = 16; // 宽度开始点
+	const int h_s = 16; // 高度开始点
+	const int w_e = img.cols - w_s; // 宽度结束点
+	const int h_e = img.rows - h_s; // 高度结束点
 
-	const int width = img.cols;
-	const int height = img.rows;
 	const int channel = img.channels();
 	const int rowlen = img.step[0];
-	const int w_e = w_s + w_b >= width  ? width -  1 : w_s + w_b;
-	const int h_e = h_s + h_b >= height ? height - 1 : h_s + h_b;
 	const uchar* pst1 = img.data + (h_s-1) * rowlen;
 	const uchar* pst2 = img.data + h_s     * rowlen;
 	const uchar* pst3 = img.data + (h_s+1) * rowlen;
@@ -47,4 +43,15 @@ double BlurDetect(const Mat& img)
 	double ret = (double)sum_all / size;
 
 	return ret;
+}
+
+
+double ImagePsnr(const Mat& img)
+{
+	Mat tmp_m, tmp_sd;
+	meanStdDev(img, tmp_m, tmp_sd);
+	double sd = tmp_sd.at<double>(0, 0);
+	const double K = 20.0 * log10(255.0);
+	double psnr = K - 20.0 * log10(sd);
+	return psnr;
 }
